@@ -218,7 +218,7 @@
     <h1>Universal Basic Income Simulation</h1>
 
     <div class="subtitle">
-      This is an interactive simulation of a small voluntary Universal Basic Income (UBI) program. A simulated population contributes a certain percent of their income to a common pool (such as 10%), and then that total pool is redistributed based on a few simple rules.
+      This is an interactive simulation of a small voluntary Universal Basic Income (UBI) program. A simulated population contributes a certain percent of their income to a common pool (such as 10%), and then that total pool is redistributed equally to all participants.
     </div>
 
     <div class="subtitle">
@@ -293,14 +293,9 @@
 
         <label for="householdType">Your household type</label>
         <select id="householdType">
-          <option value="single">Single</option>
-          <option value="roommates">Roommates</option>
+          <option value="single">Single / roomates</option>
           <option value="partnered">Married / partner sharing income</option>
         </select>
-
-        <div id="sharedIncomeNote" class="note hidden">
-          People with roommates or income-sharing partners receive a smaller UBI payment, set here to 0.8 times the single-person amount.
-        </div>
 
         <div id="singleRoommateFields">
           <div class="section-label">Your information</div>
@@ -394,9 +389,6 @@
   </div>
 
   <script>
-    const ROOMMATE_MULTIPLIER = 0.8;
-    const PARTNER_MULTIPLIER = 0.8;
-
     function yearlyToMonthly(yearly) {
       return yearly / 12;
     }
@@ -418,16 +410,10 @@
     }
 
     function sampleHouseholdStatus() {
-      const r = Math.random();
-      if (r < 0.50) return "single";
-      if (r < 0.75) return "roommates";
-      return "partnered";
+      return Math.random() < 0.5 ? "single" : "partnered";
     }
 
     function getAdultWeight(status) {
-      if (status === "single") return 1.0;
-      if (status === "roommates") return ROOMMATE_MULTIPLIER;
-      if (status === "partnered") return PARTNER_MULTIPLIER;
       return 1.0;
     }
 
@@ -612,7 +598,6 @@
       const type = document.getElementById("householdType").value;
       const singleRoommate = document.getElementById("singleRoommateFields");
       const partnerFields = document.getElementById("partnerFields");
-      const sharedIncomeNote = document.getElementById("sharedIncomeNote");
 
       if (type === "partnered") {
         singleRoommate.classList.add("hidden");
@@ -620,12 +605,6 @@
       } else {
         singleRoommate.classList.remove("hidden");
         partnerFields.classList.add("hidden");
-      }
-
-      if (type === "roommates" || type === "partnered") {
-        sharedIncomeNote.classList.remove("hidden");
-      } else {
-        sharedIncomeNote.classList.add("hidden");
       }
     }
 
@@ -690,14 +669,14 @@
       let userResult;
       let userHoverText;
 
-      if (householdType === "single" || householdType === "roommates") {
+      if (householdType === "single") {
         const yearlyIncome = parseFloat(document.getElementById("userYearlyIncome").value);
         const kids = includeChildren ? parseInt(document.getElementById("userKids").value, 10) : 0;
 
         userResult = evaluateSingleLikePerson(
           yearlyIncome,
           kids,
-          householdType,
+          "single",
           contributionRate,
           sim.basePayoutUnit,
           includeChildren,
@@ -708,7 +687,7 @@
           `You` +
           `<br>Income: $${userResult.yearlyIncome.toFixed(0)}/yr` +
           `<br>Monthly income: $${userResult.monthlyIncome.toFixed(2)}` +
-          `<br>Status: ${userResult.status}` +
+          `<br>Status: Single / roomates` +
           `<br>Contribution: $${userResult.contribution.toFixed(2)}/mo` +
           `<br>Payout: $${userResult.payout.toFixed(2)}/mo` +
           `<br>Net: $${userResult.netMonthly.toFixed(2)}/mo` +
@@ -734,6 +713,7 @@
         );
 
         userResult = {
+          monthlyIncome: yearlyToMonthly(householdResult.sharedIncomePerPerson),
           netMonthly: householdResult.netMonthly,
           netYearly: householdResult.netYearly
         };
