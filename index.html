@@ -30,7 +30,7 @@
       line-height: 1.55;
       margin-bottom: 14px;
       color: #d1d5db;
-      max-width: 950px;
+      max-width: 980px;
     }
 
     .subtitle + .subtitle {
@@ -130,6 +130,18 @@
       line-height: 1.4;
     }
 
+    .children-box {
+      margin-top: 18px;
+      padding: 14px 14px 16px 14px;
+      background: #38414b;
+      border: 1px solid #4b5563;
+      border-radius: 12px;
+    }
+
+    .children-box .section-label {
+      margin-top: 0;
+    }
+
     .result-box {
       display: grid;
       grid-template-columns: repeat(2, minmax(180px, 1fr));
@@ -202,11 +214,11 @@
     <h1>Universal Basic Income Simulation</h1>
 
     <div class="subtitle">
-      This interactive simulation models a small voluntary redistribution pool. A simulated population contributes a chosen percent of their income to a common fund, and the total pool is then redistributed according to simple household rules. Singles receive the full adult payout weight, while adults living with roommates or a shared-income partner receive a reduced payout weight.
+      This is an interactive simulation of a small voluntary Universal Basic Income (UBI) program. A simulated population contributes a certain percent of their income to a common pool (such as 10%), and then that total pool is redistributed based on a few simple rules.
     </div>
 
     <div class="subtitle">
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non justo vel arcu elementum pellentesque. Vivamus posuere, lectus in faucibus blandit, erat nibh posuere urna, vitae feugiat lorem velit in nunc. Integer vitae sem ut odio congue fermentum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
+      I view UBI as the ultimate form of solidarity. We all recognize that huge wealth inequalities exist in our society (even between people in DSA, although hopefully less stark), and that wealth redistribution is essential. This type of small-scale voluntary program is a step towards that goal, providing support or even just convenience to people right here and right now, without having to get people elected and get laws passed first. With UBI there are no strings attached and everyone follows the same rules. You still benefit even if you usually pay more than you get back. Not only does a UBI support the community, but it can also serve as a form of insurance, so that if you lose your job or get into debt or something along those lines, you will start receiving more of a payment. In fact, it is kind of like a general (non-field specific) union. Feel free to mess with this simulation all you want and let me know if you have any concerns or ideas.
     </div>
 
     <div class="grid">
@@ -227,47 +239,52 @@
           </div>
         </div>
 
-        <label class="checkbox-label" for="includeChildren">
-          <input id="includeChildren" type="checkbox" />
-          <span>Include children</span>
-        </label>
-        <div class="note">
-          Check to give children under 18 a UBI, distributed to their parents / guardians.
-        </div>
-
-        <div id="childrenSettings" class="hidden">
-          <label for="childMultiplierInput">Child UBI as a fraction of adult UBI</label>
-          <input id="childMultiplierInput" type="number" min="0" step="0.05" value="0.5" />
+        <div class="children-box">
+          <label class="checkbox-label" for="includeChildren">
+            <input id="includeChildren" type="checkbox" />
+            <span>Include children</span>
+          </label>
           <div class="note">
-            0.5 means children receive half the UBI payment.
+            Check to give children under 18 a UBI, distributed to their parents / guardians.
           </div>
 
-          <div class="section-label">Chance each simulated person has 0, 1, 2, or 3 children</div>
-          <div class="note">
-            These values determine how children are randomly assigned in the simulation population.
-          </div>
+          <div id="childrenSettings" class="hidden">
+            <label for="childMultiplierInput">Child UBI as a fraction of adult UBI</label>
+            <input id="childMultiplierInput" type="number" min="0" step="0.05" value="0.5" />
+            <div class="note">
+              0.5 means children receive half the UBI payment.
+            </div>
 
-          <div class="four-grid">
-            <div>
-              <label for="childProb0">0 children (%)</label>
-              <input id="childProb0" type="number" min="0" max="100" step="1" value="70" />
+            <div class="section-label">Chance each simulated person has 0, 1, 2, or 3 children</div>
+            <div class="note">
+              These values determine how children are randomly assigned in the simulation population.
             </div>
-            <div>
-              <label for="childProb1">1 child (%)</label>
-              <input id="childProb1" type="number" min="0" max="100" step="1" value="15" />
-            </div>
-            <div>
-              <label for="childProb2">2 children (%)</label>
-              <input id="childProb2" type="number" min="0" max="100" step="1" value="10" />
-            </div>
-            <div>
-              <label for="childProb3">3 children (%)</label>
-              <input id="childProb3" type="number" min="0" max="100" step="1" value="5" />
+
+            <div class="four-grid">
+              <div>
+                <label for="childProb0">0 children (%)</label>
+                <input id="childProb0" type="number" min="0" max="100" step="1" value="70" />
+              </div>
+              <div>
+                <label for="childProb1">1 child (%)</label>
+                <input id="childProb1" type="number" min="0" max="100" step="1" value="15" />
+              </div>
+              <div>
+                <label for="childProb2">2 children (%)</label>
+                <input id="childProb2" type="number" min="0" max="100" step="1" value="10" />
+              </div>
+              <div>
+                <label for="childProb3">3 children (%)</label>
+                <input id="childProb3" type="number" min="0" max="100" step="1" value="5" />
+              </div>
             </div>
           </div>
         </div>
 
         <label for="contributionRate">Contribution rate (%)</label>
+        <div class="note">
+          This is the percent of each person's income that goes into the common pool before the pool is redistributed.
+        </div>
         <input id="contributionRate" type="number" min="0" max="100" step="0.1" value="10" />
 
         <label for="householdType">Your household type</label>
@@ -276,6 +293,10 @@
           <option value="roommates">Roommates</option>
           <option value="partnered">Married / partner sharing income</option>
         </select>
+
+        <div id="sharedIncomeNote" class="note hidden">
+          People with roommates or income-sharing partners receive a smaller UBI payment, set here to 0.8 times the single-person amount.
+        </div>
 
         <div id="singleRoommateFields">
           <div class="section-label">Your information</div>
@@ -324,11 +345,11 @@
           <div class="small-grid">
             <div>
               <label for="partnerMonthlyIncome">Partner monthly income ($)</label>
-              <input id="partnerMonthlyIncome" type="number" min="0" step="10" value="2916.67" />
+              <input id="partnerMonthlyIncome" type="number" min="0" step="10" value="3333.33" />
             </div>
             <div>
               <label for="partnerYearlyIncome">Partner yearly income ($)</label>
-              <input id="partnerYearlyIncome" type="number" min="0" step="1000" value="35000" />
+              <input id="partnerYearlyIncome" type="number" min="0" step="1000" value="40000" />
             </div>
           </div>
 
@@ -338,7 +359,7 @@
           </div>
 
           <div class="note">
-            It is assumed your partner is also participating in this program.
+            Your partner's income and your income will be combined and divided in half, and this will be considered your income.
           </div>
         </div>
 
@@ -525,10 +546,12 @@
       includeChildren,
       childMultiplier
     ) {
+      const combinedIncome = userYearlyIncome + partnerYearlyIncome;
+      const sharedIncomePerPerson = combinedIncome / 2;
       const actualKids = includeChildren ? kids : 0;
 
       const user = evaluateSingleLikePerson(
-        userYearlyIncome,
+        sharedIncomePerPerson,
         actualKids,
         "partnered",
         contributionRate,
@@ -538,7 +561,7 @@
       );
 
       const partner = evaluateSingleLikePerson(
-        partnerYearlyIncome,
+        sharedIncomePerPerson,
         actualKids,
         "partnered",
         contributionRate,
@@ -550,6 +573,7 @@
       return {
         user,
         partner,
+        sharedIncomePerPerson,
         netMonthly: user.netMonthly + partner.netMonthly,
         netYearly: user.netYearly + partner.netYearly
       };
@@ -597,6 +621,7 @@
       const type = document.getElementById("householdType").value;
       const singleRoommate = document.getElementById("singleRoommateFields");
       const partnerFields = document.getElementById("partnerFields");
+      const sharedIncomeNote = document.getElementById("sharedIncomeNote");
 
       if (type === "partnered") {
         singleRoommate.classList.add("hidden");
@@ -604,6 +629,12 @@
       } else {
         singleRoommate.classList.remove("hidden");
         partnerFields.classList.add("hidden");
+      }
+
+      if (type === "roommates" || type === "partnered") {
+        sharedIncomeNote.classList.remove("hidden");
+      } else {
+        sharedIncomeNote.classList.add("hidden");
       }
     }
 
@@ -717,8 +748,9 @@
 
         userHoverText =
           `You + partner` +
-          `<br>Your income: $${userYearlyIncome.toFixed(0)}/yr` +
-          `<br>Partner income: $${partnerYearlyIncome.toFixed(0)}/yr` +
+          `<br>Your entered income: $${userYearlyIncome.toFixed(0)}/yr` +
+          `<br>Partner entered income: $${partnerYearlyIncome.toFixed(0)}/yr` +
+          `<br>Shared income per person used in simulation: $${householdResult.sharedIncomePerPerson.toFixed(0)}/yr` +
           `<br>Combined household net: $${householdResult.netMonthly.toFixed(2)}/mo`;
 
         if (includeChildren) {
