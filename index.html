@@ -139,7 +139,11 @@
     }
 
     .children-box .section-label {
-      margin-top: 0;
+      margin-top: 16px;
+    }
+
+    .child-multiplier-note {
+      margin-bottom: 18px;
     }
 
     .result-box {
@@ -218,7 +222,7 @@
     </div>
 
     <div class="subtitle">
-      I view UBI as the ultimate form of solidarity. We all recognize that huge wealth inequalities exist in our society (even between people in DSA, although hopefully less stark), and that wealth redistribution is essential. This type of small-scale voluntary program is a step towards that goal, providing support or even just convenience to people right here and right now, without having to get people elected and get laws passed first. With UBI there are no strings attached and everyone follows the same rules. You still benefit even if you usually pay more than you get back. Not only does a UBI support the community, but it can also serve as a form of insurance, so that if you lose your job or get into debt or something along those lines, you will start receiving more of a payment. In fact, it is kind of like a general (non-field specific) union. Feel free to mess with this simulation all you want and let me know if you have any concerns or ideas.
+      I view UBI as the ultimate form of solidarity. We all recognize that huge wealth inequalities exist in our society (even between people in DSA, although less stark), and that wealth redistribution is essential. This type of small-scale voluntary program is a step towards that goal, providing support or even just convenience to people right here and right now, without having to get people elected and get laws passed first. With UBI there are no strings attached and everyone follows the same rules. You still benefit even if you usually pay more than you get back. Not only does a UBI support the community, but it can also serve as a form of insurance, so that if you lose your job or get into debt or something along those lines, you will start receiving more of a payment. In fact, it is kind of like a general (non-field specific) union. Feel free to mess with this simulation all you want and let me know if you have any questions, concerns or ideas.
     </div>
 
     <div class="grid">
@@ -251,7 +255,7 @@
           <div id="childrenSettings" class="hidden">
             <label for="childMultiplierInput">Child UBI as a fraction of adult UBI</label>
             <input id="childMultiplierInput" type="number" min="0" step="0.05" value="0.5" />
-            <div class="note">
+            <div class="note child-multiplier-note">
               0.5 means children receive half the UBI payment.
             </div>
 
@@ -313,7 +317,7 @@
           </div>
 
           <div class="note">
-            You can subtract monthly debt payments from your income, but please don't include other costs such as rent.
+            You can subtract monthly debt payments from your income, but please don't subtract other costs such as rent.
           </div>
 
           <div id="singleChildrenFields" class="hidden">
@@ -337,7 +341,7 @@
           </div>
 
           <div class="note">
-            You can subtract monthly debt payments from your income, but please don't include other costs such as rent.
+            You can subtract monthly debt payments from your income, but please don't subtract other costs such as rent.
           </div>
 
           <div class="section-label">Partner information</div>
@@ -383,7 +387,7 @@
         <div id="plot"></div>
 
         <div class="footer-note">
-          Gray dots are simulated participants. The large blue dot is your household result. Hover over points to see details.
+          Gray dots are simulated participants. The large blue dot is your household result. Hover over dots to see details.
         </div>
       </div>
     </div>
@@ -457,7 +461,8 @@
             `<br>Status: ${p.status}` +
             `<br>Contribution: $${p.contribution.toFixed(2)}/mo` +
             `<br>Payout: $${p.payout.toFixed(2)}/mo` +
-            `<br>Net: $${p.netMonthly.toFixed(2)}/mo`;
+            `<br>Net: $${p.netMonthly.toFixed(2)}/mo` +
+            `<br>Yearly net: $${p.netYearly.toFixed(2)}/yr`;
 
           if (p.includeChildren) {
             hover += `<br>Kids: ${p.kids}`;
@@ -720,7 +725,8 @@
           `<br>Status: ${userResult.status}` +
           `<br>Contribution: $${userResult.contribution.toFixed(2)}/mo` +
           `<br>Payout: $${userResult.payout.toFixed(2)}/mo` +
-          `<br>Net: $${userResult.netMonthly.toFixed(2)}/mo`;
+          `<br>Net: $${userResult.netMonthly.toFixed(2)}/mo` +
+          `<br>Yearly net: $${userResult.netYearly.toFixed(2)}/yr`;
 
         if (includeChildren) {
           userHoverText += `<br>Kids: ${userResult.kids}`;
@@ -751,7 +757,8 @@
           `<br>Your entered income: $${userYearlyIncome.toFixed(0)}/yr` +
           `<br>Partner entered income: $${partnerYearlyIncome.toFixed(0)}/yr` +
           `<br>Shared income per person used in simulation: $${householdResult.sharedIncomePerPerson.toFixed(0)}/yr` +
-          `<br>Combined household net: $${householdResult.netMonthly.toFixed(2)}/mo`;
+          `<br>Combined household net: $${householdResult.netMonthly.toFixed(2)}/mo` +
+          `<br>Combined household yearly net: $${householdResult.netYearly.toFixed(2)}/yr`;
 
         if (includeChildren) {
           userHoverText += `<br>Kids: ${kids}`;
