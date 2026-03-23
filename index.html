@@ -433,7 +433,9 @@
           `<br>Contribution: $${p.contribution.toFixed(2)}/mo` +
           `<br>Payout: $${p.payout.toFixed(2)}/mo` +
           `<br>Net: $${p.netMonthly.toFixed(2)}/mo` +
-          `<br>Yearly net: $${p.netYearly.toFixed(2)}/yr`;
+          `<br>Yearly net: $${p.netYearly.toFixed(2)}/yr` +
+          `<br>Net %: ${p.netPercent.toFixed(2)}%` +
+          `<br>Net yearly %: ${p.netYearlyPercent.toFixed(2)}%`;
 
         if (p.includeChildren) {
           hover += `<br>Kids: ${p.kids}`;
@@ -485,6 +487,10 @@
         p.payout = p.distributionWeight * basePayoutUnit;
         p.netMonthly = p.payout - p.contribution;
         p.netYearly = p.netMonthly * 12;
+        const safeMonthlyIncome = p.monthlyIncome > 0 ? p.monthlyIncome : 1;
+        const safeYearlyIncome = p.yearlyIncome > 0 ? p.yearlyIncome : 1;
+        p.netPercent = (p.netMonthly / safeMonthlyIncome) * 100;
+        p.netYearlyPercent = (p.netYearly / safeYearlyIncome) * 100;
       });
 
       return { people, totalPool, totalWeight, basePayoutUnit };
@@ -499,6 +505,10 @@
       const payout = distributionWeight * basePayoutUnit;
       const netMonthly = payout - contribution;
       const netYearly = netMonthly * 12;
+      const safeMonthlyIncome = monthlyIncome > 0 ? monthlyIncome : 1;
+      const safeYearlyIncome = yearlyIncome > 0 ? yearlyIncome : 1;
+      const netPercent = (netMonthly / safeMonthlyIncome) * 100;
+      const netYearlyPercent = (netYearly / safeYearlyIncome) * 100;
 
       return {
         status,
@@ -510,7 +520,9 @@
         contribution,
         payout,
         netMonthly,
-        netYearly
+        netYearly,
+        netPercent,
+        netYearlyPercent
       };
     }
 
@@ -691,7 +703,9 @@
           `<br>Contribution: $${userResult.contribution.toFixed(2)}/mo` +
           `<br>Payout: $${userResult.payout.toFixed(2)}/mo` +
           `<br>Net: $${userResult.netMonthly.toFixed(2)}/mo` +
-          `<br>Yearly net: $${userResult.netYearly.toFixed(2)}/yr`;
+          `<br>Yearly net: $${userResult.netYearly.toFixed(2)}/yr` +
+          `<br>Net %: ${userResult.netPercent.toFixed(2)}%` +
+          `<br>Net yearly %: ${userResult.netYearlyPercent.toFixed(2)}%`;
 
         if (includeChildren) {
           userHoverText += `<br>Kids: ${userResult.kids}`;
@@ -717,6 +731,8 @@
           netMonthly: householdResult.netMonthly,
           netYearly: householdResult.netYearly
         };
+        userResult.netPercent = (userResult.netMonthly / userResult.monthlyIncome) * 100;
+        userResult.netYearlyPercent = (userResult.netYearly / (userResult.monthlyIncome * 12)) * 100;
 
         userHoverText =
           `You + partner` +
@@ -724,7 +740,9 @@
           `<br>Partner entered income: $${partnerYearlyIncome.toFixed(0)}/yr` +
           `<br>Shared income per person used in simulation: $${householdResult.sharedIncomePerPerson.toFixed(0)}/yr` +
           `<br>Combined household net: $${householdResult.netMonthly.toFixed(2)}/mo` +
-          `<br>Combined household yearly net: $${householdResult.netYearly.toFixed(2)}/yr`;
+          `<br>Combined household yearly net: $${householdResult.netYearly.toFixed(2)}/yr` +
+          `<br>Net %: ${userResult.netPercent.toFixed(2)}%` +
+          `<br>Net yearly %: ${userResult.netYearlyPercent.toFixed(2)}%`;
 
         if (includeChildren) {
           userHoverText += `<br>Kids: ${kids}`;
