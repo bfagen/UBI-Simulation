@@ -754,7 +754,7 @@
       document.getElementById("monthlyNetDisplay").textContent = formatMoney(userResult.netMonthly);
       document.getElementById("yearlyNetDisplay").textContent = formatMoney(userResult.netYearly);
 
-      const plotData = makeBucketedDotPlotData(sim.people, userResult);
+      const plotData = makeScatterPlotData(sim.people, userResult);
 
       const simTrace = {
         x: plotData.x,
@@ -794,7 +794,7 @@
           font: { color: "#f3f4f6" }
         },
         xaxis: {
-          title: "Number of people in this net-gain bucket",
+          title: "Monthly income ($)",
           color: "#d1d5db",
           gridcolor: "#4b5563",
           zerolinecolor: "#6b7280"
