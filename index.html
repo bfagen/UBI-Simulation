@@ -431,52 +431,38 @@
       return 1.0;
     }
 
-    function makeBucketedDotPlotData(simPeople, userResult) {
-      const bucketSize = 25;
-      const buckets = new Map();
-
-      simPeople.forEach((p) => {
-        const bucket = Math.round(p.netMonthly / bucketSize) * bucketSize;
-        if (!buckets.has(bucket)) {
-          buckets.set(bucket, []);
-        }
-        buckets.get(bucket).push(p);
-      });
-
+    function makeScatterPlotData(simPeople, userResult) {
       const x = [];
       const y = [];
       const text = [];
 
-      const sortedBuckets = Array.from(buckets.keys()).sort((a, b) => a - b);
+      simPeople.forEach((p) => {
+        x.push(p.monthlyIncome);
+        y.push(p.netMonthly);
 
-      sortedBuckets.forEach((bucketY) => {
-        const arr = buckets.get(bucketY);
-        arr.forEach((p, i) => {
-          x.push(i + 1);
-          y.push(bucketY);
+        let hover =
+          `Income: $${p.yearlyIncome.toFixed(0)}/yr` +
+          `<br>Monthly income: $${p.monthlyIncome.toFixed(2)}` +
+          `<br>Status: ${p.status}` +
+          `<br>Contribution: $${p.contribution.toFixed(2)}/mo` +
+          `<br>Payout: $${p.payout.toFixed(2)}/mo` +
+          `<br>Net: $${p.netMonthly.toFixed(2)}/mo` +
+          `<br>Yearly net: $${p.netYearly.toFixed(2)}/yr`;
 
-          let hover =
-            `Income: $${p.yearlyIncome.toFixed(0)}/yr` +
-            `<br>Monthly income: $${p.monthlyIncome.toFixed(2)}` +
-            `<br>Status: ${p.status}` +
-            `<br>Contribution: $${p.contribution.toFixed(2)}/mo` +
-            `<br>Payout: $${p.payout.toFixed(2)}/mo` +
-            `<br>Net: $${p.netMonthly.toFixed(2)}/mo` +
-            `<br>Yearly net: $${p.netYearly.toFixed(2)}/yr`;
+        if (p.includeChildren) {
+          hover += `<br>Kids: ${p.kids}`;
+        }
 
-          if (p.includeChildren) {
-            hover += `<br>Kids: ${p.kids}`;
-          }
-
-          text.push(hover);
-        });
+        text.push(hover);
       });
 
-      const userBucket = Math.round(userResult.netMonthly / bucketSize) * bucketSize;
-      const sameBucketCount = y.filter(v => v === userBucket).length;
-      const userX = Math.max(1, sameBucketCount + 2);
-
-      return { x, y, text, userX, userY: userResult.netMonthly };
+      return {
+        x,
+        y,
+        text,
+        userX: userResult.monthlyIncome,
+        userY: userResult.netMonthly
+      };
     }
 
     function simulatePopulation(nPeople, minYearly, maxYearly, contributionRate, includeChildren, childMultiplier, childProbabilities) {
