@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Universal Basic Income Simulation</title>
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f5f7fb;
+      color: #1f2937;
+    }
+
+    .container {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    h1 {
+      margin: 0 0 8px 0;
+      font-size: 2.2rem;
+      color: #0f172a;
+    }
+
+    .subtitle {
+      font-size: 1rem;
+      line-height: 1.5;
+      margin-bottom: 24px;
+      color: #374151;
+      max-width: 900px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .panel {
+      background: white;
+      border-radius: 14px;
+      padding: 18px;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+    }
+
+    .panel h2 {
+      margin-top: 0;
+      font-size: 1.2rem;
+      color: #0f172a;
+    }
+
+    .section-label {
+      font-weight: 700;
+      margin-top: 18px;
+      margin-bottom: 8px;
+      color: #111827;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+      margin-bottom: 4px;
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    input, select, button {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid #cbd5e1;
+      font-size: 0.95rem;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+    }
+
+    button {
+      margin-top: 18px;
+      background: #2563eb;
+      color: white;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #1d4ed8;
+    }
+
+    .note {
+      font-size: 0.88rem;
+      color: #475569;
+      margin-top: 10px;
+      line-height: 1.4;
+    }
+
+    .result-box {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(180px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .result-card {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 12px;
+      padding: 14px;
+    }
+
+    .result-card .label {
+      font-size: 0.85rem;
+      color: #475569;
+      margin-bottom: 6px;
+    }
+
+    .result-card .value {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #1d4ed8;
+    }
+
+    .small-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 10px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    #plot {
+      width: 100%;
+      height: 720px;
+    }
+
+    .footer-note {
+      margin-top: 16px;
+      font-size: 0.88rem;
+      color: #64748b;
+      line-height: 1.4;
+    }
+
+    @media (max-width: 1000px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      #plot {
+        height: 560px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Universal Basic Income Simulation</h1>
+    <div class="subtitle">
+      This interactive simulation models a small voluntary redistribution pool. A simulated population contributes a chosen percent of their effective monthly income to a common fund. Effective monthly income is income after monthly debt payments. The total pool is then redistributed equally according to simple household rules: singles receive the full adult payout weight, adults living with roommates or a shared-income partner receive a reduced payout weight, and each child under 18 adds extra payout weight.
+    </div>
+
+    <div class="grid">
+      <div class="panel">
+        <h2>Simulation settings</h2>
+
+        <label for="nPeople">Number of simulated people</label>
+        <input id="nPeople" type="number" min="10" step="1" value="100" />
+
+        <div class="small-grid">
+          <div>
+            <label for="minIncome">Minimum yearly income ($)</label>
+            <input id="minIncome" type="number" min="0" step="1000" value="20000" />
+          </div>
+          <div>
+            <label for="maxIncome">Maximum yearly income ($)</label>
+            <input id="maxIncome" type="number" min="0" step="1000" value="70000" />
+          </div>
+        </div>
+
+        <label for="contributionRate">Contribution rate (%)</label>
+        <input id="contributionRate" type="number" min="0" max="100" step="0.1" value="10" />
+
+        <label for="householdType">Your household type</label>
+        <select id="householdType">
+          <option value="single">Single</option>
+          <option value="roommates">Roommates</option>
+          <option value="partnered">Married / partner sharing income</option>
+        </select>
+
+        <div id="singleRoommateFields">
+          <div class="section-label">Your information</div>
+
+          <div class="small-grid">
+            <div>
+              <label for="userYearlyIncome">Your yearly income ($)</label>
+              <input id="userYearlyIncome" type="number" min="0" step="1000" value="40000" />
+            </div>
+            <div>
+              <label for="userMonthlyIncome">Your monthly income ($)</label>
+              <input id="userMonthlyIncome" type="number" min="0" step="10" value="3333.33" />
+            </div>
+          </div>
+
+          <div class="small-grid">
+            <div>
+              <label for="userDebt">Your monthly debt payment ($)</label>
+              <input id="userDebt" type="number" min="0" step="10" value="150" />
+            </div>
+            <div>
+              <label for="userKids">Children under 18</label>
+              <input id="userKids" type="number" min="0" max="10" step="1" value="0" />
+            </div>
+          </div>
+        </div>
+
+        <div id="partnerFields" class="hidden">
+          <div class="section-label">Your information</div>
+
+          <div class="small-grid">
+            <div>
+              <label for="partnerUserYearlyIncome">Your yearly income ($)</label>
+              <input id="partnerUserYearlyIncome" type="number" min="0" step="1000" value="40000" />
+            </div>
+            <div>
+              <label for="partnerUserMonthlyIncome">Your monthly income ($)</label>
+              <input id="partnerUserMonthlyIncome" type="number" min="0" step="10" value="3333.33" />
+            </div>
+          </div>
+
+          <label for="partnerUserDebt">Your monthly debt payment ($)</label>
+          <input id="partnerUserDebt" type="number" min="0" step="10" value="150" />
+
+          <div class="section-label">Partner information</div>
+
+          <div class="small-grid">
+            <div>
+              <label for="partnerYearlyIncome">Partner yearly income ($)</label>
+              <input id="partnerYearlyIncome" type="number" min="0" step="1000" value="35000" />
+            </div>
+            <div>
+              <label for="partnerMonthlyIncome">Partner monthly income ($)</label>
+              <input id="partnerMonthlyIncome" type="number" min="0" step="10" value="2916.67" />
+            </div>
+          </div>
+
+          <div class="small-grid">
+            <div>
+              <label for="partnerDebt">Partner monthly debt payment ($)</label>
+              <input id="partnerDebt" type="number" min="0" step="10" value="100" />
+            </div>
+            <div>
+              <label for="householdKids">Household children under 18</label>
+              <input id="householdKids" type="number" min="0" max="10" step="1" value="1" />
+            </div>
+          </div>
+
+          <div class="note">
+            It is assumed your partner is also participating in this program.
+          </div>
+        </div>
+
+        <button id="runBtn">Run Simulation</button>
+
+        <div class="footer-note">
+          Fixed background rules: children are randomly assigned with probabilities 60% for 0, 20% for 1, 10% for 2, and 10% for 3. Monthly debt is randomly assigned from $0 to $400. Roommates and partnered adults use a reduced adult payout multiplier of 0.8. Each child adds a payout multiplier of 0.5.
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Results</h2>
+
+        <div class="result-box">
+          <div class="result-card">
+            <div class="label">Your monthly net gain / loss</div>
+            <div class="value" id="monthlyNetDisplay">$0.00</div>
+          </div>
+          <div class="result-card">
+            <div class="label">Your yearly net gain / loss</div>
+            <div class="value" id="yearlyNetDisplay">$0.00</div>
+          </div>
+        </div>
+
+        <div id="plot"></div>
+
+        <div class="footer-note">
+          Gray dots are simulated participants. The large blue dot is your household result. Hover over points to see details.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const CHILD_MULTIPLIER = 0.5;
+    const ROOMMATE_MULTIPLIER = 0.8;
+    const PARTNER_MULTIPLIER = 0.8;
+
+    function yearlyToMonthly(yearly) {
+      return yearly / 12;
+    }
+
+    function monthlyToYearly(monthly) {
+      return monthly * 12;
+    }
+
+    function clampMinZero(x) {
+      return Math.max(0, x);
+    }
+
+    function randUniform(min, max) {
+      return min + Math.random() * (max - min);
+    }
+
+    function sampleChildren() {
+      const r = Math.random();
+      if (r < 0.60) return 0;
+      if (r < 0.80) return 1;
+      if (r < 0.90) return 2;
+      return 3;
+    }
+
+    function sampleHouseholdStatus() {
+      const r = Math.random();
+      if (r < 0.50) return "single";
+      if (r < 0.75) return "roommates";
+      return "partnered";
+    }
+
+    function getAdultWeight(status) {
+      if (status === "single") return 1.0;
+      if (status === "roommates") return ROOMMATE_MULTIPLIER;
+      if (status === "partnered") return PARTNER_MULTIPLIER;
+      return 1.0;
+    }
+
+    function makeBucketedDotPlotData(simPeople, userResult) {
+      const bucketSize = 25;
+      const buckets = new Map();
+
+      simPeople.forEach((p) => {
+        const bucket = Math.round(p.netMonthly / bucketSize) * bucketSize;
+        if (!buckets.has(bucket)) {
+          buckets.set(bucket, []);
+        }
+        buckets.get(bucket).push(p);
+      });
+
+      const x = [];
+      const y = [];
+      const text = [];
+
+      const sortedBuckets = Array.from(buckets.keys()).sort((a, b) => a - b);
+
+      sortedBuckets.forEach((bucketY) => {
+        const arr = buckets.get(bucketY);
+        arr.forEach((p, i) => {
+          x.push(i + 1);
+          y.push(bucketY);
+          text.push(
+            `Income: $${p.yearlyIncome.toFixed(0)}/yr` +
+            `<br>Monthly income: $${p.monthlyIncome.toFixed(2)}` +
+            `<br>Debt: $${p.monthlyDebt.toFixed(2)}/mo` +
+            `<br>Kids: ${p.kids}` +
+            `<br>Status: ${p.status}` +
+            `<br>Contribution: $${p.contribution.toFixed(2)}/mo` +
+            `<br>Payout: $${p.payout.toFixed(2)}/mo` +
+            `<br>Net: $${p.netMonthly.toFixed(2)}/mo`
+          );
+        });
+      });
+
+      const userBucket = Math.round(userResult.netMonthly / bucketSize) * bucketSize;
+      const sameBucketCount = y.filter(v => v === userBucket).length;
+      const userX = Math.max(1, sameBucketCount + 2);
+
+      return { x, y, text, userX, userY: userResult.netMonthly };
+    }
+
+    function simulatePopulation(nPeople, minYearly, maxYearly, contributionRate) {
+      const people = [];
+
+      for (let i = 0; i < nPeople; i++) {
+        const yearlyIncome = randUniform(minYearly, maxYearly);
+        const monthlyIncome = yearlyToMonthly(yearlyIncome);
+        const monthlyDebt = randUniform(0, 400);
+        const effectiveMonthlyIncome = clampMinZero(monthlyIncome - monthlyDebt);
+        const kids = sampleChildren();
+        const status = sampleHouseholdStatus();
+
+        const adultWeight = getAdultWeight(status);
+        const distributionWeight = adultWeight + kids * CHILD_MULTIPLIER;
+        const contribution = effectiveMonthlyIncome * contributionRate;
+
+        people.push({
+          id: i + 1,
+          yearlyIncome,
+          monthlyIncome,
+          monthlyDebt,
+          effectiveMonthlyIncome,
+          kids,
+          status,
+          adultWeight,
+          distributionWeight,
+          contribution
+        });
+      }
+
+      const totalPool = people.reduce((sum, p) => sum + p.contribution, 0);
+      const totalWeight = people.reduce((sum, p) => sum + p.distributionWeight, 0);
+      const basePayoutUnit = totalPool / totalWeight;
+
+      people.forEach((p) => {
+        p.payout = p.distributionWeight * basePayoutUnit;
+        p.netMonthly = p.payout - p.contribution;
+        p.netYearly = p.netMonthly * 12;
+      });
+
+      return { people, totalPool, totalWeight, basePayoutUnit };
+    }
+
+    function evaluateSingleLikePerson(yearlyIncome, monthlyDebt, kids, status, contributionRate, basePayoutUnit) {
+      const monthlyIncome = yearlyToMonthly(yearlyIncome);
+      const effectiveMonthlyIncome = clampMinZero(monthlyIncome - monthlyDebt);
+      const adultWeight = getAdultWeight(status);
+      const distributionWeight = adultWeight + kids * CHILD_MULTIPLIER;
+      const contribution = effectiveMonthlyIncome * contributionRate;
+      const payout = distributionWeight * basePayoutUnit;
+      const netMonthly = payout - contribution;
+      const netYearly = netMonthly * 12;
+
+      return {
+        status,
+        yearlyIncome,
+        monthlyIncome,
+        monthlyDebt,
+        effectiveMonthlyIncome,
+        kids,
+        adultWeight,
+        distributionWeight,
+        contribution,
+        payout,
+        netMonthly,
+        netYearly
+      };
+    }
+
+    function evaluatePartnerHousehold(
+      userYearlyIncome,
+      userDebt,
+      partnerYearlyIncome,
+      partnerDebt,
+      kids,
+      contributionRate,
+      basePayoutUnit
+    ) {
+      const user = evaluateSingleLikePerson(
+        userYearlyIncome,
+        userDebt,
+        kids,
+        "partnered",
+        contributionRate,
+        basePayoutUnit
+      );
+
+      const partner = evaluateSingleLikePerson(
+        partnerYearlyIncome,
+        partnerDebt,
+        kids,
+        "partnered",
+        contributionRate,
+        basePayoutUnit
+      );
+
+      return {
+        user,
+        partner,
+        netMonthly: user.netMonthly + partner.netMonthly,
+        netYearly: user.netYearly + partner.netYearly
+      };
+    }
+
+    function formatMoney(x) {
+      const sign = x < 0 ? "-" : "";
+      return `${sign}$${Math.abs(x).toFixed(2)}`;
+    }
+
+    function syncYearlyMonthly(yearInput, monthInput) {
+      yearInput.addEventListener("input", () => {
+        const val = parseFloat(yearInput.value);
+        if (!isNaN(val)) {
+          monthInput.value = (val / 12).toFixed(2);
+        }
+      });
+
+      monthInput.addEventListener("input", () => {
+        const val = parseFloat(monthInput.value);
+        if (!isNaN(val)) {
+          yearInput.value = (val * 12).toFixed(2);
+        }
+      });
+    }
+
+    function updateHouseholdForm() {
+      const type = document.getElementById("householdType").value;
+      const singleRoommate = document.getElementById("singleRoommateFields");
+      const partnerFields = document.getElementById("partnerFields");
+
+      if (type === "partnered") {
+        singleRoommate.classList.add("hidden");
+        partnerFields.classList.remove("hidden");
+      } else {
+        singleRoommate.classList.remove("hidden");
+        partnerFields.classList.add("hidden");
+      }
+    }
+
+    function runSimulation() {
+      const nPeople = parseInt(document.getElementById("nPeople").value, 10);
+      const minIncome = parseFloat(document.getElementById("minIncome").value);
+      const maxIncome = parseFloat(document.getElementById("maxIncome").value);
+      const contributionRate = parseFloat(document.getElementById("contributionRate").value) / 100.0;
+      const householdType = document.getElementById("householdType").value;
+
+      if (isNaN(nPeople) || nPeople < 1) {
+        alert("Please enter a valid number of people.");
+        return;
+      }
+
+      if (isNaN(minIncome) || isNaN(maxIncome) || minIncome < 0 || maxIncome <= minIncome) {
+        alert("Please enter a valid income range.");
+        return;
+      }
+
+      const sim = simulatePopulation(nPeople, minIncome, maxIncome, contributionRate);
+
+      let userResult;
+      let userHoverText;
+
+      if (householdType === "single" || householdType === "roommates") {
+        const yearlyIncome = parseFloat(document.getElementById("userYearlyIncome").value);
+        const debt = parseFloat(document.getElementById("userDebt").value);
+        const kids = parseInt(document.getElementById("userKids").value, 10);
+
+        userResult = evaluateSingleLikePerson(
+          yearlyIncome,
+          debt,
+          kids,
+          householdType,
+          contributionRate,
+          sim.basePayoutUnit
+        );
+
+        userHoverText =
+          `You` +
+          `<br>Income: $${userResult.yearlyIncome.toFixed(0)}/yr` +
+          `<br>Monthly income: $${userResult.monthlyIncome.toFixed(2)}` +
+          `<br>Debt: $${userResult.monthlyDebt.toFixed(2)}/mo` +
+          `<br>Kids: ${userResult.kids}` +
+          `<br>Status: ${userResult.status}` +
+          `<br>Contribution: $${userResult.contribution.toFixed(2)}/mo` +
+          `<br>Payout: $${userResult.payout.toFixed(2)}/mo` +
+          `<br>Net: $${userResult.netMonthly.toFixed(2)}/mo`;
+
+      } else {
+        const userYearlyIncome = parseFloat(document.getElementById("partnerUserYearlyIncome").value);
+        const userDebt = parseFloat(document.getElementById("partnerUserDebt").value);
+        const partnerYearlyIncome = parseFloat(document.getElementById("partnerYearlyIncome").value);
+        const partnerDebt = parseFloat(document.getElementById("partnerDebt").value);
+        const kids = parseInt(document.getElementById("householdKids").value, 10);
+
+        const householdResult = evaluatePartnerHousehold(
+          userYearlyIncome,
+          userDebt,
+          partnerYearlyIncome,
+          partnerDebt,
+          kids,
+          contributionRate,
+          sim.basePayoutUnit
+        );
+
+        userResult = {
+          netMonthly: householdResult.netMonthly,
+          netYearly: householdResult.netYearly
+        };
+
+        userHoverText =
+          `You + partner` +
+          `<br>Your income: $${userYearlyIncome.toFixed(0)}/yr` +
+          `<br>Your debt: $${userDebt.toFixed(2)}/mo` +
+          `<br>Partner income: $${partnerYearlyIncome.toFixed(0)}/yr` +
+          `<br>Partner debt: $${partnerDebt.toFixed(2)}/mo` +
+          `<br>Kids: ${kids}` +
+          `<br>Combined household net: $${householdResult.netMonthly.toFixed(2)}/mo`;
+      }
+
+      document.getElementById("monthlyNetDisplay").textContent = formatMoney(userResult.netMonthly);
+      document.getElementById("yearlyNetDisplay").textContent = formatMoney(userResult.netYearly);
+
+      const plotData = makeBucketedDotPlotData(sim.people, userResult);
+
+      const simTrace = {
+        x: plotData.x,
+        y: plotData.y,
+        mode: "markers",
+        type: "scatter",
+        name: "Simulated people",
+        marker: {
+          size: 9,
+          color: "rgba(100,100,100,0.55)"
+        },
+        text: plotData.text,
+        hovertemplate: "%{text}<extra></extra>"
+      };
+
+      const userTrace = {
+        x: [plotData.userX],
+        y: [plotData.userY],
+        mode: "markers",
+        type: "scatter",
+        name: "You",
+        marker: {
+          size: 18,
+          color: "rgb(37, 99, 235)",
+          line: {
+            width: 2,
+            color: "white"
+          }
+        },
+        text: [userHoverText],
+        hovertemplate: "%{text}<extra></extra>"
+      };
+
+      const layout = {
+        title: "Monthly net gain/loss distribution",
+        xaxis: {
+          title: "Number of people in this net-gain bucket"
+        },
+        yaxis: {
+          title: "Monthly net gain / loss ($)",
+          zeroline: true,
+          zerolinewidth: 1
+        },
+        hovermode: "closest",
+        plot_bgcolor: "white",
+        paper_bgcolor: "white",
+        margin: { l: 70, r: 30, t: 60, b: 70 }
+      };
+
+      Plotly.newPlot("plot", [simTrace, userTrace], layout, { responsive: true });
+    }
+
+    syncYearlyMonthly(
+      document.getElementById("userYearlyIncome"),
+      document.getElementById("userMonthlyIncome")
+    );
+
+    syncYearlyMonthly(
+      document.getElementById("partnerUserYearlyIncome"),
+      document.getElementById("partnerUserMonthlyIncome")
+    );
+
+    syncYearlyMonthly(
+      document.getElementById("partnerYearlyIncome"),
+      document.getElementById("partnerMonthlyIncome")
+    );
+
+    document.getElementById("householdType").addEventListener("change", updateHouseholdForm);
+    document.getElementById("runBtn").addEventListener("click", runSimulation);
+
+    updateHouseholdForm();
+    runSimulation();
+  </script>
+</body>
+</html>
