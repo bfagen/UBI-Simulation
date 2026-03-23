@@ -9,8 +9,8 @@
     body {
       font-family: Arial, sans-serif;
       margin: 0;
-      background: #f5f7fb;
-      color: #1f2937;
+      background: #2f343c;
+      color: #e5e7eb;
     }
 
     .container {
@@ -22,42 +22,62 @@
     h1 {
       margin: 0 0 8px 0;
       font-size: 2.2rem;
-      color: #0f172a;
+      color: #f3f4f6;
     }
 
     .subtitle {
       font-size: 1rem;
-      line-height: 1.5;
+      line-height: 1.55;
+      margin-bottom: 14px;
+      color: #d1d5db;
+      max-width: 950px;
+    }
+
+    .subtitle + .subtitle {
       margin-bottom: 24px;
-      color: #374151;
-      max-width: 900px;
     }
 
     .grid {
       display: grid;
       grid-template-columns: 380px 1fr;
-      gap: 20px;
+      gap: 26px;
       align-items: start;
     }
 
     .panel {
-      background: white;
-      border-radius: 14px;
-      padding: 18px;
-      box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+      background: transparent;
+      border-radius: 0;
+      padding: 0;
+      box-shadow: none;
     }
 
     .panel h2 {
       margin-top: 0;
       font-size: 1.2rem;
-      color: #0f172a;
+      color: #f3f4f6;
     }
 
     .section-label {
       font-weight: 700;
       margin-top: 18px;
       margin-bottom: 8px;
-      color: #111827;
+      color: #f3f4f6;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-top: 18px;
+      font-size: 1.02rem;
+      font-weight: 700;
+      color: #f3f4f6;
+    }
+
+    .checkbox-label input[type="checkbox"] {
+      width: auto;
+      margin-top: 2px;
+      transform: scale(1.1);
     }
 
     label {
@@ -66,6 +86,7 @@
       margin-bottom: 4px;
       font-size: 0.95rem;
       font-weight: 600;
+      color: #e5e7eb;
     }
 
     input, select, button {
@@ -73,14 +94,20 @@
       box-sizing: border-box;
       padding: 10px 12px;
       border-radius: 10px;
-      border: 1px solid #cbd5e1;
+      border: 1px solid #4b5563;
       font-size: 0.95rem;
+      background: #3a4049;
+      color: #f3f4f6;
+    }
+
+    input::placeholder {
+      color: #9ca3af;
     }
 
     input:focus, select:focus {
       outline: none;
-      border-color: #2563eb;
-      box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+      border-color: #60a5fa;
+      box-shadow: 0 0 0 3px rgba(96,165,250,0.18);
     }
 
     button {
@@ -98,8 +125,8 @@
 
     .note {
       font-size: 0.88rem;
-      color: #475569;
-      margin-top: 10px;
+      color: #cbd5e1;
+      margin-top: 6px;
       line-height: 1.4;
     }
 
@@ -111,25 +138,31 @@
     }
 
     .result-card {
-      background: #eff6ff;
-      border: 1px solid #bfdbfe;
+      background: #39424d;
+      border: 1px solid #4b5563;
       border-radius: 12px;
       padding: 14px;
     }
 
     .result-card .label {
       font-size: 0.85rem;
-      color: #475569;
+      color: #cbd5e1;
       margin-bottom: 6px;
     }
 
     .result-card .value {
       font-size: 1.4rem;
       font-weight: 800;
-      color: #1d4ed8;
+      color: #93c5fd;
     }
 
     .small-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 10px;
+    }
+
+    .four-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0,1fr));
       gap: 10px;
@@ -142,12 +175,14 @@
     #plot {
       width: 100%;
       height: 720px;
+      border-radius: 12px;
+      overflow: hidden;
     }
 
     .footer-note {
       margin-top: 16px;
       font-size: 0.88rem;
-      color: #64748b;
+      color: #cbd5e1;
       line-height: 1.4;
     }
 
@@ -165,8 +200,13 @@
 <body>
   <div class="container">
     <h1>Universal Basic Income Simulation</h1>
+
     <div class="subtitle">
-      This interactive simulation models a small voluntary redistribution pool. A simulated population contributes a chosen percent of their effective monthly income to a common fund. Effective monthly income is income after monthly debt payments. The total pool is then redistributed equally according to simple household rules: singles receive the full adult payout weight, adults living with roommates or a shared-income partner receive a reduced payout weight, and each child under 18 adds extra payout weight.
+      This interactive simulation models a small voluntary redistribution pool. A simulated population contributes a chosen percent of their income to a common fund, and the total pool is then redistributed according to simple household rules. Singles receive the full adult payout weight, while adults living with roommates or a shared-income partner receive a reduced payout weight.
+    </div>
+
+    <div class="subtitle">
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non justo vel arcu elementum pellentesque. Vivamus posuere, lectus in faucibus blandit, erat nibh posuere urna, vitae feugiat lorem velit in nunc. Integer vitae sem ut odio congue fermentum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
     </div>
 
     <div class="grid">
@@ -187,6 +227,46 @@
           </div>
         </div>
 
+        <label class="checkbox-label" for="includeChildren">
+          <input id="includeChildren" type="checkbox" />
+          <span>Include children</span>
+        </label>
+        <div class="note">
+          Check to give children under 18 a UBI, distributed to their parents / guardians.
+        </div>
+
+        <div id="childrenSettings" class="hidden">
+          <label for="childMultiplierInput">Child UBI as a fraction of adult UBI</label>
+          <input id="childMultiplierInput" type="number" min="0" step="0.05" value="0.5" />
+          <div class="note">
+            0.5 means children receive half the UBI payment.
+          </div>
+
+          <div class="section-label">Chance each simulated person has 0, 1, 2, or 3 children</div>
+          <div class="note">
+            These values determine how children are randomly assigned in the simulation population.
+          </div>
+
+          <div class="four-grid">
+            <div>
+              <label for="childProb0">0 children (%)</label>
+              <input id="childProb0" type="number" min="0" max="100" step="1" value="70" />
+            </div>
+            <div>
+              <label for="childProb1">1 child (%)</label>
+              <input id="childProb1" type="number" min="0" max="100" step="1" value="15" />
+            </div>
+            <div>
+              <label for="childProb2">2 children (%)</label>
+              <input id="childProb2" type="number" min="0" max="100" step="1" value="10" />
+            </div>
+            <div>
+              <label for="childProb3">3 children (%)</label>
+              <input id="childProb3" type="number" min="0" max="100" step="1" value="5" />
+            </div>
+          </div>
+        </div>
+
         <label for="contributionRate">Contribution rate (%)</label>
         <input id="contributionRate" type="number" min="0" max="100" step="0.1" value="10" />
 
@@ -202,24 +282,22 @@
 
           <div class="small-grid">
             <div>
-              <label for="userYearlyIncome">Your yearly income ($)</label>
-              <input id="userYearlyIncome" type="number" min="0" step="1000" value="40000" />
-            </div>
-            <div>
               <label for="userMonthlyIncome">Your monthly income ($)</label>
               <input id="userMonthlyIncome" type="number" min="0" step="10" value="3333.33" />
             </div>
+            <div>
+              <label for="userYearlyIncome">Your yearly income ($)</label>
+              <input id="userYearlyIncome" type="number" min="0" step="1000" value="40000" />
+            </div>
           </div>
 
-          <div class="small-grid">
-            <div>
-              <label for="userDebt">Your monthly debt payment ($)</label>
-              <input id="userDebt" type="number" min="0" step="10" value="150" />
-            </div>
-            <div>
-              <label for="userKids">Children under 18</label>
-              <input id="userKids" type="number" min="0" max="10" step="1" value="0" />
-            </div>
+          <div class="note">
+            You can subtract monthly debt payments from your income, but please don't include other costs such as rent.
+          </div>
+
+          <div id="singleChildrenFields" class="hidden">
+            <label for="userKids">Children under 18</label>
+            <input id="userKids" type="number" min="0" step="1" value="0" />
           </div>
         </div>
 
@@ -228,40 +306,35 @@
 
           <div class="small-grid">
             <div>
-              <label for="partnerUserYearlyIncome">Your yearly income ($)</label>
-              <input id="partnerUserYearlyIncome" type="number" min="0" step="1000" value="40000" />
-            </div>
-            <div>
               <label for="partnerUserMonthlyIncome">Your monthly income ($)</label>
               <input id="partnerUserMonthlyIncome" type="number" min="0" step="10" value="3333.33" />
             </div>
+            <div>
+              <label for="partnerUserYearlyIncome">Your yearly income ($)</label>
+              <input id="partnerUserYearlyIncome" type="number" min="0" step="1000" value="40000" />
+            </div>
           </div>
 
-          <label for="partnerUserDebt">Your monthly debt payment ($)</label>
-          <input id="partnerUserDebt" type="number" min="0" step="10" value="150" />
+          <div class="note">
+            You can subtract monthly debt payments from your income, but please don't include other costs such as rent.
+          </div>
 
           <div class="section-label">Partner information</div>
 
           <div class="small-grid">
             <div>
-              <label for="partnerYearlyIncome">Partner yearly income ($)</label>
-              <input id="partnerYearlyIncome" type="number" min="0" step="1000" value="35000" />
-            </div>
-            <div>
               <label for="partnerMonthlyIncome">Partner monthly income ($)</label>
               <input id="partnerMonthlyIncome" type="number" min="0" step="10" value="2916.67" />
             </div>
+            <div>
+              <label for="partnerYearlyIncome">Partner yearly income ($)</label>
+              <input id="partnerYearlyIncome" type="number" min="0" step="1000" value="35000" />
+            </div>
           </div>
 
-          <div class="small-grid">
-            <div>
-              <label for="partnerDebt">Partner monthly debt payment ($)</label>
-              <input id="partnerDebt" type="number" min="0" step="10" value="100" />
-            </div>
-            <div>
-              <label for="householdKids">Household children under 18</label>
-              <input id="householdKids" type="number" min="0" max="10" step="1" value="1" />
-            </div>
+          <div id="partnerChildrenFields" class="hidden">
+            <label for="householdKids">Household children under 18</label>
+            <input id="householdKids" type="number" min="0" step="1" value="1" />
           </div>
 
           <div class="note">
@@ -270,10 +343,6 @@
         </div>
 
         <button id="runBtn">Run Simulation</button>
-
-        <div class="footer-note">
-          Fixed background rules: children are randomly assigned with probabilities 60% for 0, 20% for 1, 10% for 2, and 10% for 3. Monthly debt is randomly assigned from $0 to $400. Roommates and partnered adults use a reduced adult payout multiplier of 0.8. Each child adds a payout multiplier of 0.5.
-        </div>
       </div>
 
       <div class="panel">
@@ -300,7 +369,6 @@
   </div>
 
   <script>
-    const CHILD_MULTIPLIER = 0.5;
     const ROOMMATE_MULTIPLIER = 0.8;
     const PARTNER_MULTIPLIER = 0.8;
 
@@ -312,19 +380,15 @@
       return monthly * 12;
     }
 
-    function clampMinZero(x) {
-      return Math.max(0, x);
-    }
-
     function randUniform(min, max) {
       return min + Math.random() * (max - min);
     }
 
-    function sampleChildren() {
+    function sampleChildren(probabilities) {
       const r = Math.random();
-      if (r < 0.60) return 0;
-      if (r < 0.80) return 1;
-      if (r < 0.90) return 2;
+      if (r < probabilities[0]) return 0;
+      if (r < probabilities[0] + probabilities[1]) return 1;
+      if (r < probabilities[0] + probabilities[1] + probabilities[2]) return 2;
       return 3;
     }
 
@@ -365,16 +429,20 @@
         arr.forEach((p, i) => {
           x.push(i + 1);
           y.push(bucketY);
-          text.push(
+
+          let hover =
             `Income: $${p.yearlyIncome.toFixed(0)}/yr` +
             `<br>Monthly income: $${p.monthlyIncome.toFixed(2)}` +
-            `<br>Debt: $${p.monthlyDebt.toFixed(2)}/mo` +
-            `<br>Kids: ${p.kids}` +
             `<br>Status: ${p.status}` +
             `<br>Contribution: $${p.contribution.toFixed(2)}/mo` +
             `<br>Payout: $${p.payout.toFixed(2)}/mo` +
-            `<br>Net: $${p.netMonthly.toFixed(2)}/mo`
-          );
+            `<br>Net: $${p.netMonthly.toFixed(2)}/mo`;
+
+          if (p.includeChildren) {
+            hover += `<br>Kids: ${p.kids}`;
+          }
+
+          text.push(hover);
         });
       });
 
@@ -385,32 +453,29 @@
       return { x, y, text, userX, userY: userResult.netMonthly };
     }
 
-    function simulatePopulation(nPeople, minYearly, maxYearly, contributionRate) {
+    function simulatePopulation(nPeople, minYearly, maxYearly, contributionRate, includeChildren, childMultiplier, childProbabilities) {
       const people = [];
 
       for (let i = 0; i < nPeople; i++) {
         const yearlyIncome = randUniform(minYearly, maxYearly);
         const monthlyIncome = yearlyToMonthly(yearlyIncome);
-        const monthlyDebt = randUniform(0, 400);
-        const effectiveMonthlyIncome = clampMinZero(monthlyIncome - monthlyDebt);
-        const kids = sampleChildren();
+        const kids = includeChildren ? sampleChildren(childProbabilities) : 0;
         const status = sampleHouseholdStatus();
 
         const adultWeight = getAdultWeight(status);
-        const distributionWeight = adultWeight + kids * CHILD_MULTIPLIER;
-        const contribution = effectiveMonthlyIncome * contributionRate;
+        const distributionWeight = adultWeight + kids * childMultiplier;
+        const contribution = monthlyIncome * contributionRate;
 
         people.push({
           id: i + 1,
           yearlyIncome,
           monthlyIncome,
-          monthlyDebt,
-          effectiveMonthlyIncome,
           kids,
           status,
           adultWeight,
           distributionWeight,
-          contribution
+          contribution,
+          includeChildren
         });
       }
 
@@ -427,12 +492,12 @@
       return { people, totalPool, totalWeight, basePayoutUnit };
     }
 
-    function evaluateSingleLikePerson(yearlyIncome, monthlyDebt, kids, status, contributionRate, basePayoutUnit) {
+    function evaluateSingleLikePerson(yearlyIncome, kids, status, contributionRate, basePayoutUnit, includeChildren, childMultiplier) {
       const monthlyIncome = yearlyToMonthly(yearlyIncome);
-      const effectiveMonthlyIncome = clampMinZero(monthlyIncome - monthlyDebt);
       const adultWeight = getAdultWeight(status);
-      const distributionWeight = adultWeight + kids * CHILD_MULTIPLIER;
-      const contribution = effectiveMonthlyIncome * contributionRate;
+      const actualKids = includeChildren ? kids : 0;
+      const distributionWeight = adultWeight + actualKids * childMultiplier;
+      const contribution = monthlyIncome * contributionRate;
       const payout = distributionWeight * basePayoutUnit;
       const netMonthly = payout - contribution;
       const netYearly = netMonthly * 12;
@@ -441,9 +506,7 @@
         status,
         yearlyIncome,
         monthlyIncome,
-        monthlyDebt,
-        effectiveMonthlyIncome,
-        kids,
+        kids: actualKids,
         adultWeight,
         distributionWeight,
         contribution,
@@ -455,29 +518,33 @@
 
     function evaluatePartnerHousehold(
       userYearlyIncome,
-      userDebt,
       partnerYearlyIncome,
-      partnerDebt,
       kids,
       contributionRate,
-      basePayoutUnit
+      basePayoutUnit,
+      includeChildren,
+      childMultiplier
     ) {
+      const actualKids = includeChildren ? kids : 0;
+
       const user = evaluateSingleLikePerson(
         userYearlyIncome,
-        userDebt,
-        kids,
+        actualKids,
         "partnered",
         contributionRate,
-        basePayoutUnit
+        basePayoutUnit,
+        includeChildren,
+        childMultiplier
       );
 
       const partner = evaluateSingleLikePerson(
         partnerYearlyIncome,
-        partnerDebt,
-        kids,
+        actualKids,
         "partnered",
         contributionRate,
-        basePayoutUnit
+        basePayoutUnit,
+        includeChildren,
+        childMultiplier
       );
 
       return {
@@ -509,6 +576,23 @@
       });
     }
 
+    function updateChildrenUI() {
+      const includeChildren = document.getElementById("includeChildren").checked;
+      const childrenSettings = document.getElementById("childrenSettings");
+      const singleChildrenFields = document.getElementById("singleChildrenFields");
+      const partnerChildrenFields = document.getElementById("partnerChildrenFields");
+
+      if (includeChildren) {
+        childrenSettings.classList.remove("hidden");
+        singleChildrenFields.classList.remove("hidden");
+        partnerChildrenFields.classList.remove("hidden");
+      } else {
+        childrenSettings.classList.add("hidden");
+        singleChildrenFields.classList.add("hidden");
+        partnerChildrenFields.classList.add("hidden");
+      }
+    }
+
     function updateHouseholdForm() {
       const type = document.getElementById("householdType").value;
       const singleRoommate = document.getElementById("singleRoommateFields");
@@ -523,12 +607,29 @@
       }
     }
 
+    function getChildProbabilities() {
+      const p0 = parseFloat(document.getElementById("childProb0").value) / 100;
+      const p1 = parseFloat(document.getElementById("childProb1").value) / 100;
+      const p2 = parseFloat(document.getElementById("childProb2").value) / 100;
+      const p3 = parseFloat(document.getElementById("childProb3").value) / 100;
+
+      const total = p0 + p1 + p2 + p3;
+
+      if (Math.abs(total - 1) > 0.0001) {
+        return null;
+      }
+
+      return [p0, p1, p2, p3];
+    }
+
     function runSimulation() {
       const nPeople = parseInt(document.getElementById("nPeople").value, 10);
       const minIncome = parseFloat(document.getElementById("minIncome").value);
       const maxIncome = parseFloat(document.getElementById("maxIncome").value);
       const contributionRate = parseFloat(document.getElementById("contributionRate").value) / 100.0;
       const householdType = document.getElementById("householdType").value;
+      const includeChildren = document.getElementById("includeChildren").checked;
+      const childMultiplier = parseFloat(document.getElementById("childMultiplierInput").value);
 
       if (isNaN(nPeople) || nPeople < 1) {
         alert("Please enter a valid number of people.");
@@ -540,51 +641,73 @@
         return;
       }
 
-      const sim = simulatePopulation(nPeople, minIncome, maxIncome, contributionRate);
+      if (isNaN(childMultiplier) || childMultiplier < 0) {
+        alert("Please enter a valid child UBI fraction.");
+        return;
+      }
+
+      let childProbabilities = [0.70, 0.15, 0.10, 0.05];
+      if (includeChildren) {
+        childProbabilities = getChildProbabilities();
+        if (!childProbabilities) {
+          alert("The child probability values must add up to 100%.");
+          return;
+        }
+      }
+
+      const sim = simulatePopulation(
+        nPeople,
+        minIncome,
+        maxIncome,
+        contributionRate,
+        includeChildren,
+        childMultiplier,
+        childProbabilities
+      );
 
       let userResult;
       let userHoverText;
 
       if (householdType === "single" || householdType === "roommates") {
         const yearlyIncome = parseFloat(document.getElementById("userYearlyIncome").value);
-        const debt = parseFloat(document.getElementById("userDebt").value);
-        const kids = parseInt(document.getElementById("userKids").value, 10);
+        const kids = includeChildren ? parseInt(document.getElementById("userKids").value, 10) : 0;
 
         userResult = evaluateSingleLikePerson(
           yearlyIncome,
-          debt,
           kids,
           householdType,
           contributionRate,
-          sim.basePayoutUnit
+          sim.basePayoutUnit,
+          includeChildren,
+          childMultiplier
         );
 
         userHoverText =
           `You` +
           `<br>Income: $${userResult.yearlyIncome.toFixed(0)}/yr` +
           `<br>Monthly income: $${userResult.monthlyIncome.toFixed(2)}` +
-          `<br>Debt: $${userResult.monthlyDebt.toFixed(2)}/mo` +
-          `<br>Kids: ${userResult.kids}` +
           `<br>Status: ${userResult.status}` +
           `<br>Contribution: $${userResult.contribution.toFixed(2)}/mo` +
           `<br>Payout: $${userResult.payout.toFixed(2)}/mo` +
           `<br>Net: $${userResult.netMonthly.toFixed(2)}/mo`;
 
+        if (includeChildren) {
+          userHoverText += `<br>Kids: ${userResult.kids}`;
+        }
+
       } else {
         const userYearlyIncome = parseFloat(document.getElementById("partnerUserYearlyIncome").value);
-        const userDebt = parseFloat(document.getElementById("partnerUserDebt").value);
         const partnerYearlyIncome = parseFloat(document.getElementById("partnerYearlyIncome").value);
-        const partnerDebt = parseFloat(document.getElementById("partnerDebt").value);
-        const kids = parseInt(document.getElementById("householdKids").value, 10);
+        const kids = includeChildren ? parseInt(document.getElementById("householdKids").value, 10) : 0;
 
         const householdResult = evaluatePartnerHousehold(
           userYearlyIncome,
-          userDebt,
           partnerYearlyIncome,
-          partnerDebt,
           kids,
           contributionRate,
-          sim.basePayoutUnit
+          sim.basePayoutUnit,
+          includeChildren,
+          childMultiplier
         );
 
         userResult = {
@@ -595,11 +718,12 @@
         userHoverText =
           `You + partner` +
           `<br>Your income: $${userYearlyIncome.toFixed(0)}/yr` +
-          `<br>Your debt: $${userDebt.toFixed(2)}/mo` +
           `<br>Partner income: $${partnerYearlyIncome.toFixed(0)}/yr` +
-          `<br>Partner debt: $${partnerDebt.toFixed(2)}/mo` +
-          `<br>Kids: ${kids}` +
           `<br>Combined household net: $${householdResult.netMonthly.toFixed(2)}/mo`;
+
+        if (includeChildren) {
+          userHoverText += `<br>Kids: ${kids}`;
+        }
       }
 
       document.getElementById("monthlyNetDisplay").textContent = formatMoney(userResult.netMonthly);
@@ -615,7 +739,7 @@
         name: "Simulated people",
         marker: {
           size: 9,
-          color: "rgba(100,100,100,0.55)"
+          color: "rgba(203,213,225,0.42)"
         },
         text: plotData.text,
         hovertemplate: "%{text}<extra></extra>"
@@ -629,10 +753,10 @@
         name: "You",
         marker: {
           size: 18,
-          color: "rgb(37, 99, 235)",
+          color: "rgb(59, 130, 246)",
           line: {
             width: 2,
-            color: "white"
+            color: "#e5e7eb"
           }
         },
         text: [userHoverText],
@@ -640,19 +764,31 @@
       };
 
       const layout = {
-        title: "Monthly net gain/loss distribution",
+        title: {
+          text: "Monthly net gain/loss distribution",
+          font: { color: "#f3f4f6" }
+        },
         xaxis: {
-          title: "Number of people in this net-gain bucket"
+          title: "Number of people in this net-gain bucket",
+          color: "#d1d5db",
+          gridcolor: "#4b5563",
+          zerolinecolor: "#6b7280"
         },
         yaxis: {
           title: "Monthly net gain / loss ($)",
+          color: "#d1d5db",
+          gridcolor: "#4b5563",
           zeroline: true,
-          zerolinewidth: 1
+          zerolinewidth: 1,
+          zerolinecolor: "#9ca3af"
         },
         hovermode: "closest",
-        plot_bgcolor: "white",
-        paper_bgcolor: "white",
-        margin: { l: 70, r: 30, t: 60, b: 70 }
+        plot_bgcolor: "#343b44",
+        paper_bgcolor: "#343b44",
+        margin: { l: 70, r: 30, t: 60, b: 70 },
+        legend: {
+          font: { color: "#e5e7eb" }
+        }
       };
 
       Plotly.newPlot("plot", [simTrace, userTrace], layout, { responsive: true });
@@ -674,8 +810,10 @@
     );
 
     document.getElementById("householdType").addEventListener("change", updateHouseholdForm);
+    document.getElementById("includeChildren").addEventListener("change", updateChildrenUI);
     document.getElementById("runBtn").addEventListener("click", runSimulation);
 
+    updateChildrenUI();
     updateHouseholdForm();
     runSimulation();
   </script>
